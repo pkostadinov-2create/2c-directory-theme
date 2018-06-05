@@ -121,9 +121,23 @@ class DirectoryCrawler {
 $root_path    = !empty( $_GET[ 'root_path' ] )    ? $_GET[ 'root_path' ]    : null;
 $current_path = !empty( $_GET[ 'current_path' ] ) ? $_GET[ 'current_path' ] : null;
 $depth        = !empty( $_GET[ 'depth' ] )        ? $_GET[ 'depth' ]        : 0;
+$use_cache    = !empty( $_GET['cache'] )          ? $_GET['cache']          : '/';
 
-$crawler          = new DirectoryCrawler( $root_path, $current_path, $depth );
-$directories      = $crawler->get_directories();
-$directories_json = json_encode( $directories );
+$cache_filename = 'cache-' . urlencode( $root ) . '-' . urlencode( $path ) . '-' . urlencode( $depth ) . '.txt';
 
-die( $directories_json );
+if ( $use_cache ) {
+	$cache = file_get_contents( $cache_filename );
+	if ( empty( $cache ) ) {
+		$cache = '';
+	}
+
+	die( $cache );
+} else {
+	$crawler          = new DirectoryCrawler( $root_path, $current_path, $depth );
+	$directories      = $crawler->get_directories();
+	$directories_json = json_encode( $directories );
+	
+	file_put_contents( $cache_filename, $directories_json );
+
+	die( $directories_json );
+}
