@@ -19,7 +19,7 @@ jQuery(function($) {
 	var html_class       = settings.color + ' ' + settings.font;
 	var current_path     = document.location.pathname.substring(settings.root.length);
 
-	function typeAheadInit() {
+	function typeAheadInit( cache = false ) {
 		var search_data = new Bloodhound({
 			datumTokenizer: Bloodhound.tokenizers.obj.nonword('name'),
 			queryTokenizer: Bloodhound.tokenizers.nonword,
@@ -39,7 +39,8 @@ jQuery(function($) {
 					data: {
 						root_path    : settings.root,
 						current_path : document.location.pathname,
-						depth        : settings.depth
+						depth        : settings.depth,
+						cache: cache
 					},
 					success: function() {
 						$search.removeClass('loading');
@@ -307,6 +308,8 @@ jQuery(function($) {
 
 	initTheme();
 	updateTheme();
+	typeAheadInit('true');
+	typeAheadEvents();
 	typeAheadInit();
 	typeAheadEvents();
 	serverLinksGenerator();
